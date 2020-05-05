@@ -20,7 +20,7 @@ class ClientTest extends TestCase
     {
         $client = new HttpClient();
         $this->expectException(InvalidResponseException::class);
-        $client->get("http://www.sarahjting.com/page-does-not-exist");
+        $client->get("https://www.page-does-not-exist.com");
     }
 
     public function test_client_can_send_GET_request()
@@ -29,6 +29,20 @@ class ClientTest extends TestCase
         $response = $client->get("https://www.google.com/");
 
         $this->assertInstanceOf(HttpResponse::class, $response);
+        $this->assertEquals(200, $response->getStatusCode());
         $this->assertStringContainsString("Google", $response->getBody());
+    }
+
+    public function test_client_can_send_POST_request()
+    {
+        $client = new HttpClient();
+        $response = $client->post("https://graphql-pokemon.now.sh/", [
+            "query" => "query{pokemons(first:10){name}}",
+        ]);
+
+        $this->assertInstanceOf(HttpResponse::class, $response);
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertIsArray($response->getBody());
+        $this->assertArrayHasKey("data", $response->getBody());
     }
 }

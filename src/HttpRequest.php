@@ -12,19 +12,19 @@ class HttpRequest
     var $options;
 
     /**
-     * __construct
+     * Constructor.
      *
-     * @param  mixed $method
-     * @param  mixed $uri
-     * @param  mixed $body
-     * @param  mixed $options
+     * @param  string $method
+     * @param  string $uri
+     * @param  array $body
+     * @param  array $options
      * @return void
      */
     public function __construct(string $method, string $uri, array $body = [], array $options = [])
     {
         $this->method = $method;
         $this->uri = $uri;
-        $this->body = $body;
+        $this->body = $body ? json_encode($body) : "";
     }
 
     /**
@@ -34,8 +34,25 @@ class HttpRequest
      */
     public function send(): HttpResponse
     {
-        $result = @file_get_contents($this->uri);
+        $result = @file_get_contents($this->uri, false, $this->createContext());
         return new HttpResponse($http_response_header ?? [], $result);
+    }
+
+    /**
+     * Creates a stream context for the request. 
+     *
+     * @return resource
+     */
+    public function createContext()
+    {
+        $context = stream_context_create([
+            'http' => [
+                'method' => strtoupper($this->method),
+                'header' => 'Content-Type: application/json',
+                'content' => $this->body,
+            ]
+        ]);
+        return $context;
     }
 
     /**
