@@ -24,36 +24,53 @@ class HttpRequest
     {
         $this->method = $method;
         $this->uri = $uri;
-        $this->body = $body ? json_encode($body) : "";
+        $this->body = $body;
     }
 
     /**
-     * Sends the request.
+     * Gets URI of the request.
      *
-     * @return HttpResponse
+     * @return string
      */
-    public function send(): HttpResponse
+    public function getUri(): string
     {
-        [$headers, $result] = $this->callUri($this->uri, [
-            'http' => [
-                'method' => strtoupper($this->method),
-                'header' => 'Content-Type: application/json',
-                'content' => $this->body,
-            ]
-        ]);
-        return new HttpResponse($headers ?? [], $result);
+        return $this->uri . (!$this->hasBody() ? $this->getBodyParams() : '');
     }
 
     /**
-     * Creates a stream context for the request. 
-     * Array will contain the HTTP response headers and file payload.
+     * Get query parameters.
+     *
+     * @return string
+     */
+    public function getBodyParams(): string
+    {
+        return http_build_query($this->body);
+    }
+
+    /**
+     * Creates configuration for a stream context. 
      *
      * @return array
      */
-    public function callUri($uri, $contextOptions): array
+    public function getContext(): array
     {
-        $result = @file_get_contents($uri, false, stream_context_create($contextOptions));
-        return [$http_response_header ?? [], $result];
+        return [
+            'http' => [
+                'method' => strtoupper($this->method),
+                'header' => 'Content-Type: application/json',
+                'content' => $this->hasBody() ? $this->getBodyParams() : "",
+            ]
+        ];
+    }
+
+    /**
+     * Returns whether the current request is of a method type that accepts a body. 
+     *
+     * @return bool
+     */
+    public function hasBody(): bool
+    {
+        return static::httpMethodAcceptsBody($this->method);
     }
 
     /**

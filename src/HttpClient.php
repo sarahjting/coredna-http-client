@@ -24,7 +24,18 @@ class HttpClient
     public function request(string $method, string $uri, array $body = [], array $options = []): HttpResponse
     {
         $request = new HttpRequest($method, $uri, $body, $options);
-        $result = $request->send();
-        return $result;
+        [$headers, $result] = $this->executeRequest($request->getUri(), $request->getContext());
+        return new HttpResponse($headers, $result);
+    }
+
+    /**
+     * Executes a request.
+     *
+     * @return array
+     */
+    public function executeRequest($uri, $contextOptions): array
+    {
+        $result = @file_get_contents($uri, false, stream_context_create($contextOptions));
+        return [$http_response_header ?? [], $result];
     }
 }
