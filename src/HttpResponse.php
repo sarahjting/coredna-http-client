@@ -3,6 +3,8 @@
 namespace HttpClient;
 
 use HttpClient\Exceptions\InvalidResponseException;
+use HttpClient\Exceptions\InvalidRequestException;
+use HttpClient\Exceptions\RemoteServerErrorException;
 
 class HttpResponse
 {
@@ -36,8 +38,11 @@ class HttpResponse
         }
 
         $this->statusCode = explode(" ", $headers[0])[1];
-        if ($this->statusCode >= 400 && $this->statusCode < 600) {
-            throw new InvalidResponseException();
+        if ($this->statusCode >= 400 && $this->statusCode < 500) {
+            throw new InvalidRequestException();
+        }
+        if ($this->statusCode >= 500 && $this->statusCode < 600) {
+            throw new RemoteServerErrorException();
         }
 
         foreach (array_slice($headers, 1) as $header) {

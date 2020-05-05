@@ -5,6 +5,8 @@ namespace HttpClient\Tests;
 use HttpClient\Tests\TestCase;
 use HttpClient\HttpResponse;
 use HttpClient\Exceptions\InvalidResponseException;
+use HttpClient\Exceptions\InvalidRequestException;
+use HttpClient\Exceptions\RemoteServerErrorException;
 
 class HttpResponseTest extends TestCase
 {
@@ -16,7 +18,7 @@ class HttpResponseTest extends TestCase
 
     public function test_throws_exception_for_not_found_error()
     {
-        $this->expectException(InvalidResponseException::class);
+        $this->expectException(InvalidRequestException::class);
         new HttpResponse([
             "HTTP/1.1 404 Not Found",
         ], "");
@@ -24,7 +26,7 @@ class HttpResponseTest extends TestCase
 
     public function test_throws_exception_for_server_error()
     {
-        $this->expectException(InvalidResponseException::class);
+        $this->expectException(RemoteServerErrorException::class);
         new HttpResponse([
             "HTTP/1.1 500 Internal Server Error",
         ], "");
