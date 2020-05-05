@@ -9,7 +9,7 @@ Will accept the following methods:
 | Method                             | Arguments                                                                                                                                                                               |
 | ---------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `get`, `delete`, `options`, `head` | <ul><li>**uri:** (string) URI to send request to.</li><li>**headers:**</li> (array) Associative array of headers.</ul>                                                                  |
-| `post`, `put`, `patch`             | <ul><li>**uri:** (string) URI to send request to.</li><li>**body:** (array) Associatiev array of the payload body.</li><li>**headers:**</li> (array) Associative array of headers.</ul> |
+| `post`, `put`, `patch`             | <ul><li>**uri:** (string) URI to send request to.</li><li>**body:** (array) Associative array of the payload body.</li><li>**headers:**</li> (array) Associative array of headers.</ul> |
 
 Example of client usage:
 
