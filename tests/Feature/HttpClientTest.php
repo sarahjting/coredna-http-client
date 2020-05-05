@@ -35,52 +35,61 @@ class ClientTest extends TestCase
         $this->client->get("https://www.example.com/missing-page");
     }
 
-    public function test_client_can_send_GET_request()
+    public function test_client_can_send_bodyless_requests()
     {
         $uri = "https://www.example.com/";
         $expected = "Hello World";
 
-        $this->client
-            ->shouldReceive('executeRequest')
-            ->with($uri, Mockery::any())
-            ->andReturn([
-                ["HTTP/1.1 200 OK"],
-                $expected
-            ]);
+        foreach (["get", "delete", "option", "head"] as $method) {
+            $this->client
+                ->shouldReceive('executeRequest')
+                ->with($uri, [
+                    'http' => [
+                        "method" => strtoupper($method),
+                        "header" => "Content-Type: application/json",
+                        "content" => "",
+                    ]
+                ])->andReturn([
+                    ["HTTP/1.1 200 OK"],
+                    $expected
+                ]);
 
-        $response = $this->client->get($uri);
+            $response = $this->client->$method($uri);
 
-        $this->assertInstanceOf(HttpResponse::class, $response);
-        $this->assertEquals(200, $response->getStatusCode());
-        $this->assertEquals($expected, $response->getBody());
+            $this->assertInstanceOf(HttpResponse::class, $response);
+            $this->assertEquals(200, $response->getStatusCode());
+            $this->assertEquals($expected, $response->getBody());
+        }
     }
 
-    public function test_client_can_send_POST_request()
+    public function test_client_can_send_bodied_request()
     {
         $uri = "https://www.example.com/";
         $input = ["foo" => "bar"];
         $expected = ["Hello" => "World"];
 
-        $this->client->shouldReceive('executeRequest')
-            ->with($uri, [
-                'http' => [
-                    "method" => "POST",
-                    "header" => "Content-Type: application/json",
-                    "content" => http_build_query($input),
-                ]
-            ])
-            ->andReturn([
-                [
-                    "HTTP/1.1 200 OK",
-                    'Content-Type: application/json'
-                ],
-                json_encode($expected)
-            ]);
+        foreach (["post", "put", "patch"] as $method) {
+            $this->client->shouldReceive('executeRequest')
+                ->with($uri, [
+                    'http' => [
+                        "method" => strtoupper($method),
+                        "header" => "Content-Type: application/json",
+                        "content" => http_build_query($input),
+                    ]
+                ])
+                ->andReturn([
+                    [
+                        "HTTP/1.1 200 OK",
+                        'Content-Type: application/json'
+                    ],
+                    json_encode($expected)
+                ]);
 
-        $response = $this->client->post($uri, $input);
+            $response = $this->client->$method($uri, $input);
 
-        $this->assertInstanceOf(HttpResponse::class, $response);
-        $this->assertEquals(200, $response->getStatusCode());
-        $this->assertEquals($expected, $response->getBody());
+            $this->assertInstanceOf(HttpResponse::class, $response);
+            $this->assertEquals(200, $response->getStatusCode());
+            $this->assertEquals($expected, $response->getBody());
+        }
     }
 }
