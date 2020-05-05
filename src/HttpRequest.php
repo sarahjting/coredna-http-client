@@ -61,7 +61,7 @@ class HttpRequest
      */
     public function getBody(): string
     {
-        return http_build_query($this->body);
+        return json_encode($this->body);
     }
 
     /**

@@ -5,7 +5,7 @@ namespace HttpClient\Tests;
 use Mockery;
 
 use HttpClient\Exceptions\InvalidHttpMethodException;
-use HttpClient\Exceptions\InvalidResponseException;
+use HttpClient\Exceptions\InvalidRequestException;
 use HttpClient\HttpClient;
 use HttpClient\HttpResponse;
 
@@ -27,7 +27,7 @@ class ClientTest extends TestCase
 
     public function test_client_throws_exception_for_invalid_response()
     {
-        $this->expectException(InvalidResponseException::class);
+        $this->expectException(InvalidRequestException::class);
         $this->client->shouldReceive('executeRequest')->andReturn([
             ["HTTP/1.1 404 Not Found"],
             ""
@@ -74,7 +74,7 @@ class ClientTest extends TestCase
                     'http' => [
                         "method" => strtoupper($method),
                         "header" => "Content-Type:application/json",
-                        "content" => http_build_query($input),
+                        "content" => json_encode($input),
                     ]
                 ])
                 ->andReturn([

@@ -53,11 +53,12 @@ class HttpRequestTest extends TestCase
     public function test_can_return_body()
     {
         $uri = "https://www.example.com";
-        $request = new HttpRequest("post", $uri, [
+        $body = [
             "foo" => "bar",
             'foo2' => 'bar2'
-        ]);
-        $this->assertEquals("foo=bar&foo2=bar2", $request->getBody());
+        ];
+        $request = new HttpRequest("post", $uri, $body);
+        $this->assertEquals(json_encode($body), $request->getBody());
     }
 
     public function test_can_return_simple_context()
@@ -76,17 +77,18 @@ class HttpRequestTest extends TestCase
     public function test_can_return_complex_context()
     {
         $uri = "https://www.example.com";
-        $request = new HttpRequest("post", $uri, [
+        $body = [
             "foo" => "bar",
             "foo2" => "bar2"
-        ], [
+        ];
+        $request = new HttpRequest("post", $uri, $body, [
             "Accept" => "application/xml",
         ]);
         $this->assertEquals([
             'http' => [
                 'method' => 'POST',
                 'header' => "Accept:application/xml\r\nContent-Type:application/json",
-                'content' => 'foo=bar&foo2=bar2',
+                'content' => json_encode($body),
             ]
         ], $request->getContext());
     }
