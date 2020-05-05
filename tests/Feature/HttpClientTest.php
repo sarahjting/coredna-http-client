@@ -16,6 +16,13 @@ class ClientTest extends TestCase
         $client->foo("https://www.google.com/");
     }
 
+    public function test_client_throws_exception_for_invalid_response()
+    {
+        $client = new HttpClient();
+        $this->expectException(InvalidResponseException::class);
+        $client->get("http://www.sarahjting.com/page-does-not-exist");
+    }
+
     public function test_client_can_send_GET_request()
     {
         $client = new HttpClient();

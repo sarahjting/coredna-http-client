@@ -34,7 +34,7 @@ class HttpRequest
      */
     public function send(): HttpResponse
     {
-        $result = file_get_contents($this->uri);
+        $result = @file_get_contents($this->uri);
         return new HttpResponse($http_response_header ?? [], $result);
     }
 
