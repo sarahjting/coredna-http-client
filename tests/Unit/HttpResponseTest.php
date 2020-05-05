@@ -42,4 +42,12 @@ class HttpResponseTest extends TestCase
             "Hello" => "World",
         ], $response->getHeaders());
     }
+
+    public function test_returns_status_code_as_integer()
+    {
+        $response = new HttpResponse([
+            "HTTP/1.1 201 Created",
+        ], "");
+        $this->assertEquals(201, $response->getStatusCode());
+    }
 }
