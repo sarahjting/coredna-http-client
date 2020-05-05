@@ -75,10 +75,9 @@ class HttpResponseTest extends TestCase
     public function test_invalid_json_body_throws_error()
     {
         $this->expectException(InvalidResponseException::class);
-        $response = new HttpResponse([
+        new HttpResponse([
             "HTTP/1.1 200 OK",
             "Content-Type:application/json"
         ], "{foo");
-        var_dump($response->getBody());
     }
 }
