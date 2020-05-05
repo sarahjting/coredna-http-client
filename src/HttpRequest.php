@@ -103,7 +103,7 @@ class HttpRequest
             "put",
             "patch",
             "delete",
-            "option",
+            "options",
             "head"
         ];
     }

@@ -13,7 +13,7 @@ class HttpRequestTest extends TestCase
             "put",
             "patch",
             "delete",
-            "option",
+            "options",
             "head"
         ];
     }

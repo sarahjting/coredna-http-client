@@ -40,7 +40,7 @@ class ClientTest extends TestCase
         $uri = "https://www.example.com/";
         $expected = "Hello World";
 
-        foreach (["get", "delete", "option", "head"] as $method) {
+        foreach (["get", "delete", "options", "head"] as $method) {
             $this->client
                 ->shouldReceive('executeRequest')
                 ->with($uri, [
