@@ -2,13 +2,45 @@
 
 namespace HttpClient;
 
-use HttpClient\HttpResponse;
-
+/**
+ * HTTPRequest - holds and manages information pertaining to HTTP requests.
+ * 
+ * Example usage:
+ *      $request = new HttpRequest("get", "https://www.example.com"); 
+ *      $request->getUri();
+ *      $request->getHeaders();
+ *      $request->getContext();
+ */
 class HttpRequest
 {
+    /**
+     * Method of the request.
+     *
+     * @var string
+     */
     var $method;
+
+    /**
+     * URI of the request.
+     *
+     * @var string
+     */
+
     var $uri;
-    var $query;
+
+    /**
+     * Body of the request. 
+     * This is not used for bodyless requests. 
+     *
+     * @var array
+     */
+    var $body;
+
+    /**
+     * Headers of the request.
+     *
+     * @var array
+     */
     var $headers;
 
     /**
@@ -17,17 +49,23 @@ class HttpRequest
      * @param  string $method
      * @param  string $uri
      * @param  array $body
-     * @param  array $options
+     * @param  array $headers
      * @return void
      */
-    public function __construct(string $method, string $uri, array $body = [], array $headers = [])
-    {
+    public function __construct(
+        string $method,
+        string $uri,
+        array $body = [],
+        array $headers = []
+    ) {
         $this->method = $method;
         $this->uri = $uri;
         $this->body = $body;
         $this->headers = $headers;
 
-        $this->headers['Content-Type'] = $this->headers['Content-Type'] ?? 'application/json';
+        if (!isset($this->headers["Content-Type"])) {
+            $this->headers["Content-Type"] = "application/json";
+        }
     }
 
     /**
@@ -41,7 +79,7 @@ class HttpRequest
     }
 
     /**
-     * Gets headers of the request.
+     * Gets headers of the request, as a string.
      *
      * @return string
      */
@@ -55,7 +93,7 @@ class HttpRequest
     }
 
     /**
-     * Get query parameters.
+     * Get header body, as a string.
      *
      * @return string
      */
@@ -81,7 +119,7 @@ class HttpRequest
     }
 
     /**
-     * Returns whether the current request is of a method type that accepts a body. 
+     * Returns whether the current request has a body. 
      *
      * @return bool
      */

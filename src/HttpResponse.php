@@ -6,27 +6,55 @@ use HttpClient\Exceptions\InvalidResponseException;
 use HttpClient\Exceptions\InvalidRequestException;
 use HttpClient\Exceptions\RemoteServerErrorException;
 
+/**
+ * HttpResponse - holds and manages information pertaining to HTTP responses.
+ * 
+ * Example usage:
+ *      $client = new HttpClient();
+ *      $response = $client->get("https://www.example.com/"); 
+ *      echo $response->getStatusCode();
+ *      echo $response->getBody();
+ *      var_dump($response->getHeaders());
+ */
 class HttpResponse
 {
+    /**
+     * Response body. Where the response is JSON formatted, this is an array.
+     * Otherwise, it is a string.
+     *
+     * @var string|array
+     */
     var $body;
+
+    /**
+     * Response headers.
+     *
+     * @var array
+     */
     var $headers = [];
+
+    /**
+     * Response's status code.
+     *
+     * @var int
+     */
     var $statusCode;
 
     /**
-     * __construct
+     * Constructor.
      *
-     * @param  mixed $headers
-     * @param  mixed $payload
+     * @param  array $headers
+     * @param  string $body
      * @return void
      */
-    public function __construct(array $headers, string $payload)
+    public function __construct(array $headers, string $body)
     {
         $this->parseHeaders($headers);
-        $this->parsePayload($payload);
+        $this->parseBody($body);
     }
 
     /**
-     * Loads headers.
+     * Processes and populates object with an array of headers.
      *
      * @param  array $headers
      * @return void
@@ -52,20 +80,21 @@ class HttpResponse
     }
 
     /**
-     * Loads payload. If content type is JSON, JSON will be parsed.
+     * Processes and populates object with the response body. 
+     * If JSON is expected, JSON will be parsed.
      *
-     * @param  string $payload
+     * @param  string $body
      * @return void
      */
-    private function parsePayload(string $payload): void
+    private function parseBody(string $body): void
     {
         if ($this->isJson()) {
-            $this->body = (array) json_decode($payload);
+            $this->body = (array) json_decode($body);
             if (json_last_error() !== JSON_ERROR_NONE) {
                 throw new InvalidResponseException();
             }
         } else {
-            $this->body = $payload;
+            $this->body = $body;
         }
     }
 
