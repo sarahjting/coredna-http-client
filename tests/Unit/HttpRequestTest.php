@@ -27,6 +27,70 @@ class HttpRequestTest extends TestCase
         ];
     }
 
+    public function test_can_return_uri()
+    {
+        $uri = "https://www.example.com";
+        $request = new HttpRequest("get", $uri);
+        $this->assertEquals($uri, $request->uri);
+    }
+
+    public function test_can_return_headers()
+    {
+        $uri = "https://www.example.com";
+        $request = new HttpRequest("get", $uri);
+        $this->assertEquals("Content-Type:application/json", $request->getHeaders());
+    }
+
+    public function test_can_pass_custom_headers()
+    {
+        $uri = "https://www.example.com";
+        $request = new HttpRequest("get", $uri, [], [
+            "Accept" => "application/xml"
+        ]);
+        $this->assertEquals("Accept:application/xml\r\nContent-Type:application/json", $request->getHeaders());
+    }
+
+    public function test_can_return_body()
+    {
+        $uri = "https://www.example.com";
+        $request = new HttpRequest("post", $uri, [
+            "foo" => "bar",
+            'foo2' => 'bar2'
+        ]);
+        $this->assertEquals("foo=bar&foo2=bar2", $request->getBody());
+    }
+
+    public function test_can_return_simple_context()
+    {
+        $uri = "https://www.example.com";
+        $request = new HttpRequest("get", $uri);
+        $this->assertEquals([
+            'http' => [
+                'method' => 'GET',
+                'header' => 'Content-Type:application/json',
+                'content' => '',
+            ]
+        ], $request->getContext());
+    }
+
+    public function test_can_return_complex_context()
+    {
+        $uri = "https://www.example.com";
+        $request = new HttpRequest("post", $uri, [
+            "foo" => "bar",
+            "foo2" => "bar2"
+        ], [
+            "Accept" => "application/xml",
+        ]);
+        $this->assertEquals([
+            'http' => [
+                'method' => 'POST',
+                'header' => "Accept:application/xml\r\nContent-Type:application/json",
+                'content' => 'foo=bar&foo2=bar2',
+            ]
+        ], $request->getContext());
+    }
+
     public function test_can_provide_array_of_available_methods()
     {
         $this->assertEquals($this->httpMethods(), HttpRequest::acceptableHttpMethods());

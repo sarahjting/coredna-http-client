@@ -9,7 +9,7 @@ class HttpRequest
     var $method;
     var $uri;
     var $query;
-    var $options;
+    var $headers;
 
     /**
      * Constructor.
@@ -20,11 +20,14 @@ class HttpRequest
      * @param  array $options
      * @return void
      */
-    public function __construct(string $method, string $uri, array $body = [], array $options = [])
+    public function __construct(string $method, string $uri, array $body = [], array $headers = [])
     {
         $this->method = $method;
         $this->uri = $uri;
         $this->body = $body;
+        $this->headers = $headers;
+
+        $this->headers['Content-Type'] = $this->headers['Content-Type'] ?? 'application/json';
     }
 
     /**
@@ -34,7 +37,21 @@ class HttpRequest
      */
     public function getUri(): string
     {
-        return $this->uri . (!$this->hasBody() ? $this->getBodyParams() : '');
+        return $this->uri;
+    }
+
+    /**
+     * Gets headers of the request.
+     *
+     * @return string
+     */
+    public function getHeaders(): string
+    {
+        $headers = [];
+        foreach ($this->headers as $key => $value) {
+            $headers[] = "{$key}:{$value}";
+        }
+        return implode("\r\n", $headers);
     }
 
     /**
@@ -42,7 +59,7 @@ class HttpRequest
      *
      * @return string
      */
-    public function getBodyParams(): string
+    public function getBody(): string
     {
         return http_build_query($this->body);
     }
@@ -57,8 +74,8 @@ class HttpRequest
         return [
             'http' => [
                 'method' => strtoupper($this->method),
-                'header' => 'Content-Type: application/json',
-                'content' => $this->hasBody() ? $this->getBodyParams() : "",
+                'header' => $this->getHeaders(),
+                'content' => $this->hasBody() ? $this->getBody() : "",
             ]
         ];
     }

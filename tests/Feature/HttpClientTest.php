@@ -46,7 +46,7 @@ class ClientTest extends TestCase
                 ->with($uri, [
                     'http' => [
                         "method" => strtoupper($method),
-                        "header" => "Content-Type: application/json",
+                        "header" => "Content-Type:application/json",
                         "content" => "",
                     ]
                 ])->andReturn([
@@ -73,14 +73,14 @@ class ClientTest extends TestCase
                 ->with($uri, [
                     'http' => [
                         "method" => strtoupper($method),
-                        "header" => "Content-Type: application/json",
+                        "header" => "Content-Type:application/json",
                         "content" => http_build_query($input),
                     ]
                 ])
                 ->andReturn([
                     [
                         "HTTP/1.1 200 OK",
-                        'Content-Type: application/json'
+                        'Content-Type:application/json'
                     ],
                     json_encode($expected)
                 ]);
