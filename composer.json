@@ -10,5 +10,15 @@
   ],
   "require-dev": {
     "phpunit/phpunit": "^8.5"
+  },
+  "autoload": {
+    "psr-4": {
+      "HttpClient\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "HttpClient\\Tests\\": "tests/"
+    }
   }
 }
