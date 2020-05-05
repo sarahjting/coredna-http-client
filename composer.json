@@ -1,0 +1,14 @@
+{
+  "name": "sarahjting/coredna-http-client",
+  "description": "Simple HTTP client",
+  "type": "library",
+  "authors": [
+    {
+      "name": "Sarah Ting",
+      "email": "sarah.j.ting@gmail.com"
+    }
+  ],
+  "require-dev": {
+    "phpunit/phpunit": "^8.5"
+  }
+}
