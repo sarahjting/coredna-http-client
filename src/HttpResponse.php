@@ -7,7 +7,7 @@ use HttpClient\Exceptions\InvalidResponseException;
 class HttpResponse
 {
     var $body;
-    var $headers;
+    var $headers = [];
     var $statusCode;
 
     /**
@@ -29,8 +29,8 @@ class HttpResponse
         }
 
         foreach (array_slice($headers, 1) as $header) {
-            $header = explode(":", $header, 1);
-            $this->headers[$header[0]] = $headers[1];
+            $header = explode(":", $header, 2);
+            $this->headers[$header[0]] = trim($header[1]);
         }
 
         $this->body = $payload;
