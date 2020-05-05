@@ -105,6 +105,6 @@ class HttpResponse
     public function isJson(): bool
     {
         return isset($this->headers["Content-Type"])
-            && $this->headers["Content-Type"] === "application/json";
+            && substr($this->headers["Content-Type"], 0, 16) === "application/json";
     }
 }
