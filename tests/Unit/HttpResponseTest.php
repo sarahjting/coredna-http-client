@@ -65,11 +65,20 @@ class HttpResponseTest extends TestCase
     {
         $expected = ["foo" => "bar", "nested" => [1, 2, 3]];
         $response = new HttpResponse([
-            "HTTP/1.1 200 Created",
+            "HTTP/1.1 200 OK",
             "Content-Type:application/json"
         ], json_encode($expected));
         $this->assertEquals($expected, $response->getBody());
-        $this->assertEquals($expected, $response->getJson());
         $this->assertTrue($response->isJson());
+    }
+
+    public function test_invalid_json_body_throws_error()
+    {
+        $this->expectException(InvalidResponseException::class);
+        $response = new HttpResponse([
+            "HTTP/1.1 200 OK",
+            "Content-Type:application/json"
+        ], "{foo");
+        var_dump($response->getBody());
     }
 }

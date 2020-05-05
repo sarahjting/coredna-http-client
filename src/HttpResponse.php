@@ -19,6 +19,18 @@ class HttpResponse
      */
     public function __construct(array $headers, string $payload)
     {
+        $this->parseHeaders($headers);
+        $this->parsePayload($payload);
+    }
+
+    /**
+     * Loads headers.
+     *
+     * @param  array $headers
+     * @return void
+     */
+    private function parseHeaders(array $headers): void
+    {
         if (!count($headers)) {
             throw new InvalidResponseException();
         }
@@ -32,8 +44,24 @@ class HttpResponse
             $header = explode(":", $header, 2);
             $this->headers[$header[0]] = trim($header[1]);
         }
+    }
 
-        $this->body = $payload;
+    /**
+     * Loads payload. If content type is JSON, JSON will be parsed.
+     *
+     * @param  string $payload
+     * @return void
+     */
+    private function parsePayload(string $payload): void
+    {
+        if ($this->isJson()) {
+            $this->body = (array) json_decode($payload);
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                throw new InvalidResponseException();
+            }
+        } else {
+            $this->body = $payload;
+        }
     }
 
     /**
@@ -45,19 +73,7 @@ class HttpResponse
      */
     public function getBody()
     {
-        if ($this->isJson()) return $this->getJson();
-
         return $this->body;
-    }
-
-    /**
-     * Returns current body JSON formatted as an associative array.
-     *
-     * @return array
-     */
-    public function getJson(): array
-    {
-        return (array) json_decode($this->body);
     }
 
     /**
