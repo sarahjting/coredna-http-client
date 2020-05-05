@@ -50,4 +50,26 @@ class HttpResponseTest extends TestCase
         ], "");
         $this->assertEquals(201, $response->getStatusCode());
     }
+
+    public function test_returns_body_as_text()
+    {
+        $expected = "Foo";
+        $response = new HttpResponse([
+            "HTTP/1.1 200 OK",
+        ], $expected);
+        $this->assertEquals($expected, $response->getBody());
+        $this->assertFalse($response->isJson());
+    }
+
+    public function test_returns_body_as_json()
+    {
+        $expected = ["foo" => "bar", "nested" => [1, 2, 3]];
+        $response = new HttpResponse([
+            "HTTP/1.1 200 Created",
+            "Content-Type:application/json"
+        ], json_encode($expected));
+        $this->assertEquals($expected, $response->getBody());
+        $this->assertEquals($expected, $response->getJson());
+        $this->assertTrue($response->isJson());
+    }
 }

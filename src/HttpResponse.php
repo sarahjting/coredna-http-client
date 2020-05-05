@@ -38,14 +38,26 @@ class HttpResponse
 
     /**
      * Returns body of the response. 
-     * In the case of application/json responses, this will return an associative array.
+     * In the case of JSON responses, this will return an associative array.
      * Otherwise it will return a string.
      *
      * @return string|array
      */
     public function getBody()
     {
+        if ($this->isJson()) return $this->getJson();
+
         return $this->body;
+    }
+
+    /**
+     * Returns current body JSON formatted as an associative array.
+     *
+     * @return array
+     */
+    public function getJson(): array
+    {
+        return (array) json_decode($this->body);
     }
 
     /**
@@ -66,5 +78,17 @@ class HttpResponse
     public function getStatusCode(): int
     {
         return $this->statusCode;
+    }
+
+
+    /**
+     * Returns whether the current response is json content.
+     *
+     * @return bool
+     */
+    public function isJson(): bool
+    {
+        return isset($this->headers["Content-Type"])
+            && $this->headers["Content-Type"] === "application/json";
     }
 }
