@@ -34,25 +34,26 @@ class HttpRequest
      */
     public function send(): HttpResponse
     {
-        $result = @file_get_contents($this->uri, false, $this->createContext());
-        return new HttpResponse($http_response_header ?? [], $result);
-    }
-
-    /**
-     * Creates a stream context for the request. 
-     *
-     * @return resource
-     */
-    public function createContext()
-    {
-        $context = stream_context_create([
+        [$headers, $result] = $this->callUri($this->uri, [
             'http' => [
                 'method' => strtoupper($this->method),
                 'header' => 'Content-Type: application/json',
                 'content' => $this->body,
             ]
         ]);
-        return $context;
+        return new HttpResponse($headers ?? [], $result);
+    }
+
+    /**
+     * Creates a stream context for the request. 
+     * Array will contain the HTTP response headers and file payload.
+     *
+     * @return array
+     */
+    public function callUri($uri, $contextOptions): array
+    {
+        $result = @file_get_contents($uri, false, stream_context_create($contextOptions));
+        return [$http_response_header ?? [], $result];
     }
 
     /**
